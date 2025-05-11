@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Anticheat Lisans Kontrol</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 100px; }
+    input, button { padding: 10px; font-size: 16px; }
+    #status { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Anticheat Lisans Doğrulama</h2>
+  <input type="text" id="licenseKey" placeholder="Lisans Anahtarınızı Girin" />
+  <button onclick="checkLicense()">Doğrula</button>
+  <div id="status"></div>
+
+  <script>
+    async function checkLicense() {
+      const key = document.getElementById("licenseKey").value.trim();
+      const status = document.getElementById("status");
+
+      if (!key) {
+        status.innerText = "❌ Lütfen bir lisans anahtarı girin.";
+        return;
+      }
+
+      try {
+        const response = await fetch("https://benimsitem.com/lisanslar.txt");
+        const text = await response.text();
+
+        const licenses = text.split("\n").map(l => l.trim());
+
+        if (licenses.includes(key)) {
+          status.innerText = "✅ Lisans geçerli. Anticheat aktif edildi.";
+          // Burada Lua anticheat'e lisans onaylandı sinyali verebilirsin.
+        } else {
+          status.innerText = "❌ Lisans geçersiz. Lütfen tekrar deneyin.";
+        }
+      } catch (e) {
+        status.innerText = "⚠️ Lisans sunucusuna ulaşılamadı.";
+      }
+    }
+  </script>
+</body>
+</html>
