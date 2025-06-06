@@ -1,0 +1,12 @@
+{
+  "licenses": {
+    "ABCD-1234-EFGH-5678": {     
+      "expire": "2025-12-31",
+      "status": true
+    },
+    "XXXX-YYYY-ZZZZ-WWWW": {
+      "expire": "2024-01-01",
+      "status": false
+    }
+  }
+}
