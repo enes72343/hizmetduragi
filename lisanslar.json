@@ -1,12 +1,32 @@
-{
-  "licenses": {
-    "ABCD-1234-EFGH-5678": {     
-      "expire": "2025-12-31",
-      "status": true
-    },
-    "XXXX-YYYY-ZZZZ-WWWW": {
-      "expire": "2024-01-01",
-      "status": false
+<?php
+header('Content-Type: application/json');
+
+$data = json_decode(file_get_contents('php://input'), true);
+$licenseKey = $data['key'] ?? '';
+$serial = $data['serial'] ?? '';
+$ip = $_SERVER['REMOTE_ADDR'];
+
+$licenses = json_decode(file_get_contents('../licenses.json'), true);
+
+foreach ($licenses as $license) {
+    if (
+        $license['key'] === $licenseKey &&
+        $license['serial'] === $serial &&
+        $license['status'] === 'active'
+    ) {
+        if (!empty($license['ip']) && $license['ip'] !== $ip) {
+            echo json_encode(["success" => false, "message" => "IP uyuşmazlığı"]);
+            exit;
+        }
+
+        if (strtotime($license['expires_at']) < time()) {
+            echo json_encode(["success" => false, "message" => "Lisans süresi dolmuş."]);
+            exit;
+        }
+
+        echo json_encode(["success" => true, "message" => "Lisans geçerli."]);
+        exit;
     }
-  }
 }
+
+echo json_encode(["success" => false, "message" => "Lisans bulunamadı."]);
